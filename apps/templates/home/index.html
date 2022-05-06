@@ -1,0 +1,71 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Mercado Livre {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 m-auto">
+                            <div class="card bg-transparent shadow">
+                                <div class="card-block px-0 py-0">
+                                    <div class="table-responsive">
+                                        <table class="table rounded table-light">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border">Carro</td>
+                                                    <th class="border">preço</td>
+                                                    <th class="border">ano</td>
+                                                    <th class="border">km</td>
+                                                    <th class="border">fonte</td>
+                                                    <th class="border">visualizar</td>
+                                                    <th class="border">remover</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="">
+                                                {% for car in cars %}
+                                                    <tr class="border">
+                                                        <td class="border"><h6 class=""><img class="rounded-circle" style="width:40px;" src="{{ car.photo }}" alt="{{ car.name }}">     {{ car }}</h6></td>
+                                                        <td class="border">
+                                                            <h6 class="">{{ car.price }}</h6>
+                                                        </td>
+                                                        <td class="border">
+                                                            <h6 class="">{{ car.year }}</h6>
+                                                        </td>
+                                                        <td class="border">
+                                                            <h6 class="">{{ car.km }}</h6>
+                                                        </td>
+                                                        <td class="border">
+                                                            <h6 class="">{{ car.provider_name }}</h6>
+                                                        </td>
+                                                        <td class="border"><a target="_blank" href="{{ car.source }}" class="label text-center text-c-blue"><img style="width: 35px;" src="/static/assets/images/cromada.png" alt="cromada"></img></a></td>
+                                                        <td class="border"><a target="_blank" href="#!" class="label text-center text-c-yellow"><img style="width: 35px;" src="/static/assets/images/lixeira.png" alt="lixeira"></img></a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
