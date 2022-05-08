@@ -1,5 +1,5 @@
 from requests_html import HTMLSession
-from bot.helpers import Car
+from bot.bot.helpers import Car
 session = HTMLSession()
 
 URL_BASE = "https://lista.mercadolivre.com.br/carros#D[A:carros]"

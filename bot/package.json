@@ -1,0 +1,15 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jhony",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^13.7.0",
+    "puppeteer-extra": "^3.2.3"
+  }
+}
