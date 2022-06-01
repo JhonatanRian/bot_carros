@@ -9,7 +9,8 @@
   "author": "jhony",
   "license": "ISC",
   "dependencies": {
-    "puppeteer": "^13.7.0",
+    "axios": "^0.27.2",
+    "puppeteer": "^14.1.2",
     "puppeteer-extra": "^3.2.3"
   }
 }
