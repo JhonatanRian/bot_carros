@@ -4,14 +4,14 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import json
-from datetime import date
 from django import template
+from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from apps.home.models import Cars
+from apps.home.models import Cars, Year
 
 def dict2obj(d): 
     if isinstance(d, list): 
@@ -28,7 +28,52 @@ def dict2obj(d):
 
 @login_required(login_url="/login/")
 def index(request):
-    all_cars = Cars.objects.all()
+    try:
+        market = request.GET["market"]
+        if market == "M":
+            market = "Mercado Livre"
+            all_cars = Cars.objects.filter(provider_name="Mercado Livre", visible=True)
+        elif market == "I":
+            market = "Icarros"
+            all_cars = Cars.objects.filter(provider_name="Icarros", visible=True)
+        elif market == "W":
+            market = "Webmotors"
+            all_cars = Cars.objects.filter(provider_name="Webmotors", visible=True)
+        else:
+            all_cars = Cars.objects.all().filter(visible=True)
+    except:
+        market = None
+        all_cars = Cars.objects.all().filter(visible=True)
+        
+    try:
+        search = request.GET["search"]
+        option = request.GET["option"]
+        if option == "name":
+           all_cars = all_cars.filter(name__icontains=search.strip(), visible=True)
+        elif option == "km":
+            k1 = search.split("/")[0]
+            k2 = search.split("/")[1]
+            all_cars = Cars.objects.search_km(all_cars, k1, k2)
+        elif option == "price":
+            p1 = search.split("/")[0]
+            p2 = search.split("/")[1]
+            all_cars = Cars.objects.search_price(all_cars, p1, p2)
+        elif option == "year":
+            try:
+                if market:
+                    all_cars = Year.objects.filter(name=search.strip()).first().cars.all().filter(provider_name=market, visible=True)
+                else:
+                    all_cars = Year.objects.filter(name=search.strip()).first().cars.all().filter(visible=True)
+            except:
+                all_cars = []
+        elif option == "owner":
+            all_cars = all_cars.filter(owners=search)
+        else:
+            ...
+            
+    except Exception as err:
+        print(err)
+        
     context = {'cars': all_cars}
 
     html_template = loader.get_template('home/index.html')
@@ -63,16 +108,25 @@ def pages(request):
 @csrf_exempt
 def save(request):
     cars = json.loads(request.body)
+    
     try:
         for car in cars:
             if not Cars.objects.filter(source=car["source"]).exists():
+                
+                if Year.objects.filter(name=car["year"].split("/")[0]).exists():
+                    d = Year.objects.get(name=car["year"].split("/")[0])
+                else:
+                    d = Year.objects.create(
+                        name=car["year"].split("/")[0]
+                    )
+                
                 Cars.objects.create(
-                    name=car["name"],
-                    price=car["price"],
-                    km=car["km"],
-                    year=car["year"],
+                    name=car["name"].lower().strip(),
+                    price="".join([x for x in car["price"] if x.isdigit()]),
+                    km="".join([x for x in car["km"] if x.isdigit()]),
+                    year=d,
                     source=car["source"],
-                    found_in=car["https://www.webmotors.com.br/carros/estoque?tipoveiculo=carros&anunciante=Pessoa%20F%C3%ADsica"],
+                    found_in="https://www.webmotors.com.br/carros/estoque?tipoveiculo=carros&anunciante=Pessoa%20F%C3%ADsica",
                     provider_name="Webmotors",
                     photo=car["img"],
                     disclosed=date.today(),
@@ -80,5 +134,25 @@ def save(request):
                     visible=1
                     )
         return HttpResponse(json.dumps({"AVISO MANÉ": "Deu sorte, teu código funcinou"}), content_type='application/json')
-    except:
+    except Exception as err:
+        print(err)
+        try:
+            print(cars)
+        except:
+            ...
         return HttpResponse(json.dumps({"AVISO MANÉ": "Algo de errado não está certo"}), content_type='application/json')
+
+@login_required(login_url="/login/")
+def delete(request):
+    id_ = request.GET["id"]
+
+    if id_.isdigit():
+        car = Cars.objects.get(id=id_)
+        car.visible = 0
+        car.save()
+    else:
+        all_cars = Cars.objects.all().filter(visible=1)
+        for car in all_cars:
+            car.visible = 0
+    
+    return HttpResponse(json.dumps({"del": "ete"}), content_type='application/json')

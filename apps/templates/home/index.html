@@ -3,7 +3,21 @@
 {% block title %} Mercado Livre {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+    <style>
+        td{
+            padding: 10px;
+            margin: 5px;
+        }
+        th{
+            padding: 10px;
+            margin: 5px;
+        }
+        .delete:hover{
+            cursor: pointer;
+        }
+    </style>
+{% endblock stylesheets %}
 
 {% block content %}
 
@@ -16,47 +30,91 @@
                 <div class="page-wrapper">
                     <!-- [ Main Content ] start -->
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 m-auto">
-                            <div class="card bg-transparent shadow">
-                                <div class="card-block px-0 py-0">
-                                    <div class="table-responsive">
-                                        <table class="table rounded table-light">
-                                            <thead>
-                                                <tr>
-                                                    <th class="border">Carro</td>
-                                                    <th class="border">preço</td>
-                                                    <th class="border">ano</td>
-                                                    <th class="border">km</td>
-                                                    <th class="border">fonte</td>
-                                                    <th class="border">visualizar</td>
-                                                    <th class="border">remover</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="">
-                                                {% for car in cars %}
-                                                    <tr class="border">
-                                                        <td class="border"><h6 class=""><img class="rounded-circle" style="width:40px;" src="{{ car.photo }}" alt="{{ car.name }}">     {{ car }}</h6></td>
-                                                        <td class="border">
-                                                            <h6 class="">{{ car.price }}</h6>
-                                                        </td>
-                                                        <td class="border">
-                                                            <h6 class="">{{ car.year }}</h6>
-                                                        </td>
-                                                        <td class="border">
-                                                            <h6 class="">{{ car.km }}</h6>
-                                                        </td>
-                                                        <td class="border">
-                                                            <h6 class="">{{ car.provider_name }}</h6>
-                                                        </td>
-                                                        <td class="border"><a target="_blank" href="{{ car.source }}" class="label text-center text-c-blue"><img style="width: 35px;" src="/static/assets/images/cromada.png" alt="cromada"></img></a></td>
-                                                        <td class="border"><a target="_blank" href="#!" class="label text-center text-c-yellow"><img style="width: 35px;" src="/static/assets/images/lixeira.png" alt="lixeira"></img></a></td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                        <div class="col-md-12 m-10">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="nameRadio" name="search" class="custom-control-input">
+                                <label class="custom-control-label" for="nameRadio">Name</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="yearRadio" name="search" class="custom-control-input">
+                                <label class="custom-control-label" for="yearRadio">Ano</label>
+                            </div> 
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="priceRadio" name="search" class="custom-control-input">
+                                <label class="custom-control-label" for="priceRadio">Preço</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="ownRadio" name="search" class="custom-control-input">
+                                <label class="custom-control-label" for="ownRadio">donos</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="kmRadio" name="search" class="custom-control-input">
+                                <label class="custom-control-label" for="kmRadio">km</label>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-5">
+                                    <input type="number" class="form-control" placeholder="minimo">
+                                </div>
+                                <div class="col-5">
+                                    <input type="number" class="form-control" placeholder="maximo">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary" type="button">Buscar</button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-10 d-none">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Pesquisar" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="button">Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="del" class="btn btn-danger" type="button">Deletar Tudo</button>
+                        </div>
+                        <div class="col-xl-12 col-md-12 m-auto">
+                            <table class="table-responsive shadow m-t-15">
+                                <thead class="w-100">
+                                    <tr>
+                                        <th class="border">Carro</td>
+                                        <th class="border">preço</td>
+                                        <th class="border">ano</td>
+                                        <th class="border">km</td>
+                                        <th class="border">Donos</td>
+                                        <th class="border">fonte</td>
+                                        <th class="border">visualizar</td>
+                                        <th class="border">remover</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    {% for car in cars %}
+                                        <tr class="border">
+                                            <td class="border"><h6 class=""><img class="rounded" style="width:50px;" src="{{ car.photo }}" alt="{{ car.name }}">       {{ car }}</h6></td>
+                                            <td class="border">
+                                                <h6 class="">{{ car.price }}</h6>
+                                            </td>
+                                            <td class="border">
+                                                <h6 class="">{{ car.year }}</h6>
+                                            </td>
+                                            <td class="border">
+                                                <h6 class="">{{ car.km }}</h6>
+                                            </td>
+                                            <td class="border text-center">
+                                                <h6 class="">{{ car.owners }}</h6>
+                                            </td>
+                                            <td class="border">
+                                                <h6 class="">{{ car.provider_name }}</h6>
+                                            </td>
+                                            <td class="border"><a target="_blank" href="{{ car.source }}" class="label text-center text-c-blue"><img style="width: 35px;" src="/static/assets/images/cromada.png" alt="cromada"></img></a></td>
+                                            <td class="border"><button id="{{ car.id }}" class="delete text-center border-warning bg-c-yellow rounded"><img style="width: 35px;" src="/static/assets/images/lixeira.png" alt="lixeira"></img></button></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <!-- [ Main Content ] end -->
@@ -68,4 +126,44 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        
+        // Ação de deletar
+        let elem
+        let parent
+        let buttonDeleteAll = document.querySelector("#del")
+        let buttons = document.querySelectorAll(".delete")
+
+        
+
+        buttons.forEach(element => {
+            element.addEventListener("click", (event) => {
+                elem = event.currentTarget
+                requestDelete(elem.id)
+                elem = elem.parentNode.parentNode
+                parent = elem.parentNode
+                parent.removeChild(elem)
+            })
+        })
+
+        buttonDeleteAll.addEventListener("click", () => {
+            let buttons = document.querySelectorAll(".delete")
+            buttons.forEach(elem => {
+                requestDelete(elem.id)
+                elem = elem.parentNode.parentNode
+                parent = elem.parentNode
+                parent.removeChild(elem)
+            })
+        })
+        const requestDelete = async (id) => {
+            axios.get(`{% url 'delete' %}?id=${id}`)
+        }
+
+        //======================================================
+
+
+
+    </script>
+{% endblock javascripts %}
