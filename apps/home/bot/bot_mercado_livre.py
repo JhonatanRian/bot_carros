@@ -1,6 +1,6 @@
 from datetime import date
 from requests_html import HTMLSession
-from helpers import Car
+from apps.home.bot.helpers import Car
 
 
 def get():

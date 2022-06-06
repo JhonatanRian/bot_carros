@@ -67,7 +67,7 @@ def index(request):
             except:
                 all_cars = []
         elif option == "owner":
-            all_cars = all_cars.filter(owners=search)
+            all_cars = all_cars.filter(owners=search, visible=True)
         else:
             ...
             
@@ -136,10 +136,6 @@ def save(request):
         return HttpResponse(json.dumps({"AVISO MANÉ": "Deu sorte, teu código funcinou"}), content_type='application/json')
     except Exception as err:
         print(err)
-        try:
-            print(cars)
-        except:
-            ...
         return HttpResponse(json.dumps({"AVISO MANÉ": "Algo de errado não está certo"}), content_type='application/json')
 
 @login_required(login_url="/login/")

@@ -16,6 +16,13 @@
         .delete:hover{
             cursor: pointer;
         }
+
+        .bbtn{
+            text-align: center;
+            padding-left: 8px;
+            padding-right: 7px;
+            border: none;
+        }
     </style>
 {% endblock stylesheets %}
 
@@ -32,49 +39,67 @@
                     <div class="row">
                         <div class="col-md-12 m-10">
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="nameRadio" name="search" class="custom-control-input">
+                                <input value="name" type="radio" id="nameRadio" name="search" class="custom-control-input" checked>
                                 <label class="custom-control-label" for="nameRadio">Name</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="yearRadio" name="search" class="custom-control-input">
+                                <input value="year" type="radio" id="yearRadio" name="search" class="custom-control-input">
                                 <label class="custom-control-label" for="yearRadio">Ano</label>
                             </div> 
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="priceRadio" name="search" class="custom-control-input">
+                                <input value="price" type="radio" id="priceRadio" name="search" class="custom-control-input">
                                 <label class="custom-control-label" for="priceRadio">Preço</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="ownRadio" name="search" class="custom-control-input">
+                                <input value="own" type="radio" id="ownRadio" name="search" class="custom-control-input">
                                 <label class="custom-control-label" for="ownRadio">donos</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="kmRadio" name="search" class="custom-control-input">
+                                <input value="km" type="radio" id="kmRadio" name="search" class="custom-control-input">
                                 <label class="custom-control-label" for="kmRadio">km</label>
                             </div>
                         </div>
-                        <div class="col-md-10">
+                        <div id="mension" class="col-md-10 d-none">
                             <div class="row">
                                 <div class="col-5">
                                     <input type="number" class="form-control" placeholder="minimo">
                                 </div>
                                 <div class="col-5">
-                                    <input type="number" class="form-control" placeholder="maximo">
+                                    <input type="number" class="form-control" placeholder="máximo">
                                 </div>
                                 <div class="col-md-2">
-                                    <button class="btn btn-primary" type="button">Buscar</button>
+                                    <button id="buscar" class="btn btn-primary" type="button">Buscar</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-10 d-none">
+                        <div id="mension2" class="col-md-10">
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Pesquisar" aria-label="Recipient's username" aria-describedby="basic-addon2">
                                 <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button">Buscar</button>
+                                    <button id="buscar" class="btn btn-primary" type="button">Buscar</button>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <button id="del" class="btn btn-danger" type="button">Deletar Tudo</button>
+                        </div>
+                        <div class="col-md-12 d-none" id="errorSearch">
+                            <div class="alert alert-danger" role="alert">
+                                escreva sua pesquisa primeiro
+                                <button id="exitSearch" class="bbtn float-right bg-warning text-dark rounded">X</button>
+                            </div>
+                        </div>
+                        <div class="col-md-12 d-none" id="errorOwn">
+                            <div class="alert alert-danger" role="alert">
+                                Certifique-se que escreveu a quantidade de donos sendo 1 ou 2
+                                <button id="exitOwn" class="bbtn float-right bg-warning text-dark rounded">X</button>
+                            </div>
+                        </div>
+                        <div class="col-md-12 d-none" id="errorMinMax">
+                            <div class="alert alert-danger" role="alert">
+                                Escreva numeros coerentes para uma validação
+                                <button id="exitMinMax" class="bbtn float-right bg-warning text-dark rounded">X</button>
+                            </div>
                         </div>
                         <div class="col-xl-12 col-md-12 m-auto">
                             <table class="table-responsive shadow m-t-15">
@@ -162,7 +187,150 @@
         }
 
         //======================================================
+        // Ação de pesquisa
 
+        let options = document.querySelectorAll("input[type='radio']")
+        options.forEach(element => {
+            element.addEventListener("click", event => {
+                let verify
+                let very
+                let input1 = document.querySelector("#mension2")
+                let input2 = document.querySelector("#mension")
+                let i1Dnone = input1.classList.contains("d-none")
+                let i2Dnone = input2.classList.contains("d-none")
+                let element = event.currentTarget
+                let value = element.value
+                
+                if (value === "name"){
+                    verify = input1.classList.contains('d-none')
+                    very = input2.classList.contains("d-none")
+                    if (verify && !very) {
+                        input1.classList.remove("d-none")
+                        input2.classList.add("d-none")
+                    }
+                }else if (value === "year"){
+                    verify = input1.classList.contains('d-none')
+                    very = input2.classList.contains("d-none")
+                    if (verify && !very) {
+                        input1.classList.remove("d-none")
+                        input2.classList.add("d-none")
+                    }
+                }else if (value === "price"){
+                    verify = input1.classList.contains('d-none')
+                    very = input2.classList.contains("d-none")
+                    if (!verify && very) {
+                        input1.classList.add("d-none")
+                        input2.classList.remove("d-none")
+                    }
+                }else if (value === "own"){
+                    verify = input1.classList.contains('d-none')
+                    very = input2.classList.contains("d-none")
+                    if (verify && !very) {
+                        input1.classList.remove("d-none")
+                        input2.classList.add("d-none")
+                    }
+                }else{
+                    verify = input1.classList.contains('d-none')
+                    very = input2.classList.contains("d-none")
+                    if (!verify && very) {
+                        input1.classList.add("d-none")
+                        input2.classList.remove("d-none")
+                    }
+                }
+            })
+        })
+
+        let buttonsSearch = document.querySelectorAll("#buscar")
+        buttonsSearch.forEach(element => {
+            element.addEventListener("click", (event) => {
+                let option
+                let divInput
+                let options = document.querySelectorAll("input[type='radio']")
+                options.forEach((element) => {
+                    if (element.checked) {
+                        option = element
+                        return
+                    }
+                })
+                if (option.value === "km" || option.value === "price"){
+                    let inputMin = document.querySelector("input[placeholder='minimo']").value
+                    let inputMax = document.querySelector("input[placeholder='máximo']").value
+                    let errorMinMax = document.querySelector("#errorMinMax")
+                    if ((parseInt(`${inputMin}`) > parseInt(`${inputMax}`)) || (inputMin < 0) || (inputMax < 0) || !inputMin || !inputMax){
+                        errorMinMax.classList.remove("d-none")
+                    }
+                    else{
+                        let url_atual = window.location.href
+                        if (url_atual.includes("market")){
+                            let market = url_atual.split("=")[1]
+                            window.history.pushState(`${option}`, `Pesquisa - ${option.value}`, `painel?market=${market}&option=${option.value}&search=${inputMin}/${inputMax}`)
+                            window.location.reload()
+                        
+                        }else{
+                            window.history.pushState(`${option}`, `Pesquisa - ${option.value}`, `?option=${option.value}&search=${inputMin}/${inputMax}`)
+                            window.location.reload()
+                        }
+                    }
+                }else {
+                    if (option.value === "own") {
+                        let input = document.querySelector("input[placeholder='Pesquisar']")
+                        let very = (input.value.includes("1")) || (input.value.includes("2"))
+                        if (!input.value || !very){
+                            let elemError = document.querySelector("#errorOwn")
+                            if (!input.classList.contains("d-none")){
+                                elemError.classList.remove("d-none")
+                            }
+                        }else{
+                            let url_atual = window.location.href
+                            if (url_atual.includes("market")){
+                                let market = url_atual.split("=")[1]
+                                window.history.pushState("Donos", "Pesquisa - Donos", `painel?market=${market}&option=owner&search=${input.value}`)
+                                window.location.reload()
+                            
+                            }else{
+                                window.history.pushState("Donos", "Pesquisa - Donos", `?option=owner&search=${input.value}`)
+                                window.location.reload()
+                            }
+                        }
+                    }else {
+                        input = document.querySelector("input[placeholder='Pesquisar']")
+                        if (!input.value){
+                            let elemError = document.querySelector("#errorSearch")
+                            if (!input.classList.contains("d-none")){
+                                elemError.classList.remove("d-none")
+                            }
+                        }else{
+                            let url_atual = window.location.href
+                            if (url_atual.includes("market")){
+                                let market = url_atual.split("=")[1]
+                                window.history.pushState(`${option}`, `Pesquisa - ${option.value}`, `painel?market=${market}&option=${option.value}&search=${input.value}`)
+                                window.location.reload()
+                            
+                            }else{
+                                window.history.pushState(`${option}`, `Pesquisa - ${option.value}`, `?option=${option.value}&search=${input.value}`)
+                                window.location.reload()
+                            }
+                        }
+                    }
+                }
+            })
+        })
+
+        let buttonExitSearch = document.querySelector("#exitSearch")
+        buttonExitSearch.addEventListener("click", () => {
+            let elem = document.querySelector("#errorSearch")
+            elem.classList.add("d-none")
+        })
+        let buttonExitOwn = document.querySelector("#exitOwn")
+        buttonExitOwn.addEventListener("click", () => {
+            let elem = document.querySelector("#errorOwn")
+            elem.classList.add("d-none")
+        })
+        let buttonExitMinMax = document.querySelector("#exitMinMax")
+        buttonExitMinMax.addEventListener("click", () => {
+            let elem = document.querySelector("#errorMinMax")
+            elem.classList.add("d-none")
+        })
 
 
     </script>
