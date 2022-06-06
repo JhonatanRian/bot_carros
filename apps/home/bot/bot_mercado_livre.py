@@ -16,13 +16,13 @@ def get():
     lista = []
     for eleme in elements:
         el = eleme.element
-        source = el.cssselect("a")[1].attrib["href"] ; print("source")
+        source = el.cssselect("a")[1].attrib["href"]
         data = get_data(source)
         if data:
-            price = el.find_class("price-tag-text-sr-only")[0].text_content().split()[0] ; print("price")
-            ano = el.find_class("ui-search-card-attributes__attribute")[0].text_content() ; print("ano")
-            km = el.find_class("ui-search-card-attributes__attribute")[1].text_content() ; print("km")
-            name = el.find_class("ui-search-item__group ui-search-item__group--title")[0].text_content() ; print("name")
+            price = el.find_class("price-tag-text-sr-only")[0].text_content().split()[0]
+            ano = el.find_class("ui-search-card-attributes__attribute")[0].text_content()
+            km = "".join([x for x in el.find_class("ui-search-card-attributes__attribute")[1].text_content() if x.isdigit()])
+            name = el.find_class("ui-search-item__group ui-search-item__group--title")[0].text_content()
             try:
                 img = el.cssselect("img")[0].attrib["data-src"]
             except:

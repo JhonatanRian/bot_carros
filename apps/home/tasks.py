@@ -7,20 +7,22 @@ from apps.home.bot.bot_mercado_livre import get as get_mercado_livre
 from apps.home.bot.bot_icarros import get as get_icarros
 from apps.home.bot.helpers import Car
 
+logger = get_task_logger(__name__)
+
 @shared_task
 def save_cars_mercado_livre():
+    logger.info("Capturando informações - Mercado Livre")
     cars = get_mercado_livre()
-    
     for car in cars:
         car: Car = car
-        if not Cars.objects.filter(source=car.source, name=car.name).exists():                
+        try:
             if Year.objects.filter(name=car.year).exists():
                 d = Year.objects.get(name=car.year)
             else:
                 d = Year.objects.create(
                     name=car.year
                 )
-            
+            logger.info("Salvando")
             Cars.objects.create(
                 name=car.name.lower().strip(),
                 price=car.price,
@@ -34,14 +36,16 @@ def save_cars_mercado_livre():
                 owners=car.owners,
                 visible=1
                 )
-        
+        except:
+            ...
 @shared_task
 def save_icarros():
     cars = get_icarros()
     
     for car in cars:
         car: Car = car
-        if not Cars.objects.filter(source=car.source, name=car.name).exists():                
+        
+        try:    
             if Year.objects.filter(name=car.year).exists():
                 d = Year.objects.get(name=car.year)
             else:
@@ -62,7 +66,9 @@ def save_icarros():
                 owners=car.owners,
                 visible=1
                 )
+        except:
+            ...
         
 @shared_task
 def node():
-    print(system("cd apps/home/bot ; node index"))
+    system("cd apps/home/bot ; node index")
