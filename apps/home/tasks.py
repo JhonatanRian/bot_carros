@@ -1,4 +1,5 @@
 from os import system
+from unicodedata import name
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from apps.home.models import Cars, Year
@@ -12,7 +13,7 @@ def save_cars_mercado_livre():
     
     for car in cars:
         car: Car = car
-        if not Cars.objects.filter(source=car.source).exists():                
+        if not Cars.objects.filter(source=car.source, name=car.name).exists():                
             if Year.objects.filter(name=car.year).exists():
                 d = Year.objects.get(name=car.year)
             else:
@@ -40,7 +41,7 @@ def save_icarros():
     
     for car in cars:
         car: Car = car
-        if not Cars.objects.filter(source=car.source).exists():                
+        if not Cars.objects.filter(source=car.source, name=car.name).exists():                
             if Year.objects.filter(name=car.year).exists():
                 d = Year.objects.get(name=car.year)
             else:
