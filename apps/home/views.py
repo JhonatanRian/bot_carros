@@ -44,7 +44,9 @@ def index(request):
     except:
         market = None
         all_cars = Cars.objects.all().filter(visible=True)
-        
+    
+    option = "name"
+    search = ""
     try:
         search = request.GET["search"]
         option = request.GET["option"]
@@ -59,22 +61,27 @@ def index(request):
             p2 = search.split("/")[1]
             all_cars = Cars.objects.search_price(all_cars, p1, p2)
         elif option == "year":
-            try:
-                if market:
-                    all_cars = Year.objects.filter(name=search.strip()).first().cars.all().filter(provider_name=market, visible=True)
-                else:
-                    all_cars = Year.objects.filter(name=search.strip()).first().cars.all().filter(visible=True)
-            except:
-                all_cars = []
+            p1 = search.split("/")[0]
+            p2 = search.split("/")[1]
+            all_cars = Cars.objects.search_year(all_cars, p1, p2)
         elif option == "owner":
             all_cars = all_cars.filter(owners=search, visible=True)
         else:
             ...
             
     except Exception as err:
-        print(err)
+        ...
+
+    v = ""
+    v1 = ""
+    v2 = ""
+    try:
+        v1 = search.split("/")[0]
+        v2 = search.split("/")[1]
+    except:
+        v = search
         
-    context = {'cars': all_cars}
+    context = {'cars': all_cars, "v": v, "v1": v1, "v2": v2, "op": option}
 
     html_template = loader.get_template('home/index.html')
     return HttpResponse(html_template.render(context, request))

@@ -22,7 +22,6 @@ def save_cars_mercado_livre():
                 d = Year.objects.create(
                     name=car.year
                 )
-            logger.info("Salvando")
             Cars.objects.create(
                 name=car.name.lower().strip(),
                 price=car.price,
@@ -36,23 +35,25 @@ def save_cars_mercado_livre():
                 owners=car.owners,
                 visible=1
                 )
+            logger.info("salvo")
         except:
             ...
+
 @shared_task
 def save_icarros():
+    logger.info("Capturando informação - Icarros")
     cars = get_icarros()
-    
+    logger.info(len(cars))
     for car in cars:
         car: Car = car
         
-        try:    
+        try:
             if Year.objects.filter(name=car.year).exists():
                 d = Year.objects.get(name=car.year)
             else:
                 d = Year.objects.create(
                     name=car.year
                 )
-            
             Cars.objects.create(
                 name=car.name.lower().strip(),
                 price=car.price,
@@ -66,9 +67,8 @@ def save_icarros():
                 owners=car.owners,
                 visible=1
                 )
+            logger.info("salvo um carro")
         except:
             ...
         
-@shared_task
-def node():
-    system("cd apps/home/bot ; node index")
+

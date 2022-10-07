@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from requests_html import HTMLSession
 from apps.home.bot.helpers import Car
 
@@ -6,7 +6,7 @@ from apps.home.bot.helpers import Car
 def get():
     session = HTMLSession()
 
-    URL_BASE = "https://lista.mercadolivre.com.br/carros#D[A:carros]"
+    URL_BASE = "https://lista.mercadolivre.com.br/veiculos/carros-caminhonetes-em-sao-paulo/particular/carros_NoIndex_True#applied_filter_id%3Dstate%26applied_filter_name%3DLocaliza%C3%A7%C3%A3o%26applied_filter_order%3D6%26applied_value_id%3DTUxCUFNBT085N2E4%26applied_value_name%3DS%C3%A3o+Paulo%26applied_value_order%3D25%26applied_value_results%3D28125%26is_custom%3Dfalse"
     SELECTOR = "#root-app > div > div > section > ol > li > div > div"
 
     r = session.get(URL_BASE)
@@ -30,6 +30,23 @@ def get():
             lista.append(Car(price=price, year=ano, km=km, name=name, source=source, photo=img, disclosed=data["disclosed"], owners=data["owners"]))
     return tuple(lista)
 
+def get_days_date(element_days, html, url):
+    date_ = None
+    days = "".join([x for x in element_days.element.text_content().split("·")[1] if x.isdigit()]) if '·' in element_days.element.text_content() else False
+    if not days:
+        element = html.find("#vehicle_history_specs > div > p")
+        try:
+            date_str = element[0].element.text_content().split()[-1].replace('/', '-')
+            datetime_: datetime = datetime.strptime(date_str, "%d-%m-%Y")
+            date_ = date(datetime_.year, datetime_.month, datetime_.day)
+        except:
+            ...
+    elif days and "dias" in element_days.element.text_content() and int(days) <=10:
+        date_ = date(date.today().year, date.today().month, int(days))
+    
+    return date_
+
+
 def get_data(url) -> dict:
     session = HTMLSession()
     return_values = {}
@@ -41,10 +58,10 @@ def get_data(url) -> dict:
     response = session.get(URL)
     html = response.html
     element_days = html.find(SELECTOR_DAYS)[0]
-    days = "".join([x for x in element_days.element.text_content().split("·")[1] if x.isdigit()])
-    verify = element_days.element.text_content().split("·")[1]
-    if "dias" in verify and int(days) < 5:
-        disclosed = date(date.today().year, date.today().month, int(days))
+    date_ = get_days_date(element_days, html, URL)
+    if date_:
+
+        disclosed = date_
         
         text_info = html.find(SELECTOR_INFO)[0].element.text_content().lower()
         
@@ -62,3 +79,5 @@ def get_data(url) -> dict:
         return_values["disclosed"] = disclosed
         
         return return_values
+    else:
+        return False

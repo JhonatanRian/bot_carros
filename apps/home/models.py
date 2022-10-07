@@ -25,6 +25,14 @@ class CarsManager(models.Manager):
                 lista.append(car)
         return tuple(lista)
 
+    def search_year(self, query, k1, k2):
+        lista = []
+        for car in query:
+            if int(car.year.name) >= int(k1) and int(car.year.name) <= int(k2):
+                lista.append(car)
+        return tuple(lista)
+
+
 class Year(models.Model):
     name = models.CharField(max_length=5)
     

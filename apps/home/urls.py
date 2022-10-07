@@ -13,6 +13,7 @@ urlpatterns = [
     # The home page
     path('', views.index, name='painel'),
     path('', views.index, name='home'),
+    path('', views.index, name='home'),
     path('painel', views.index, name='index'),
     path('save', views.save, name='save'),
     path('delete', views.delete, name='delete'),

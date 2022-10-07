@@ -51,7 +51,7 @@
                                 <label class="custom-control-label" for="priceRadio">Preço</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input value="own" type="radio" id="ownRadio" name="search" class="custom-control-input">
+                                <input value="owner" type="radio" id="ownRadio" name="search" class="custom-control-input">
                                 <label class="custom-control-label" for="ownRadio">donos</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
@@ -62,10 +62,10 @@
                         <div id="mension" class="col-md-10 d-none">
                             <div class="row">
                                 <div class="col-5">
-                                    <input type="number" class="form-control" placeholder="minimo">
+                                    <input type="number" class="form-control" placeholder="minimo" value="{{ v1 }}">
                                 </div>
                                 <div class="col-5">
-                                    <input type="number" class="form-control" placeholder="máximo">
+                                    <input type="number" class="form-control" placeholder="máximo" value="{{ v2 }}">
                                 </div>
                                 <div class="col-md-2">
                                     <button id="buscar" class="btn btn-primary" type="button">Buscar</button>
@@ -74,13 +74,21 @@
                         </div>
                         <div id="mension2" class="col-md-10">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Pesquisar" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                <input type="text" class="form-control" placeholder="Pesquisar" aria-label="Recipient's username" aria-describedby="basic-addon2" value="{{ v }}">
                                 <div class="input-group-append">
                                     <button id="buscar" class="btn btn-primary" type="button">Buscar</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div id="mension3" class="col-md-10 d-none">
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" placeholder="Pesquisar 1 ou 2 donos" aria-label="Recipient's username" aria-describedby="basic-addon2" value="{{ v }}">
+                                <div class="input-group-append">
+                                    <button id="buscar" class="btn btn-primary" type="button">Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group-append">
                             <button id="del" class="btn btn-danger" type="button">Deletar Tudo</button>
                         </div>
                         <div class="col-md-12 d-none" id="errorSearch">
@@ -102,7 +110,7 @@
                             </div>
                         </div>
                         <div class="col-xl-12 col-md-12 m-auto">
-                            <table class="table-responsive shadow m-t-15">
+                            <table class="table-responsive shadow m-t-15 w-100">
                                 <thead class="w-100">
                                     <tr>
                                         <th class="border">Carro</td>
@@ -110,12 +118,13 @@
                                         <th class="border">ano</td>
                                         <th class="border">km</td>
                                         <th class="border">Donos</td>
+					                   <th class="border">data</td>
                                         <th class="border">fonte</td>
                                         <th class="border">visualizar</td>
                                         <th class="border">remover</td>
                                     </tr>
                                 </thead>
-                                <tbody class="">
+                                <tbody class="w-100">
                                     {% for car in cars %}
                                         <tr class="border">
                                             <td class="border"><h6 class=""><img class="rounded" style="width:50px;" src="{{ car.photo }}" alt="{{ car.name }}">       {{ car }}</h6></td>
@@ -130,6 +139,9 @@
                                             </td>
                                             <td class="border text-center">
                                                 <h6 class="">{{ car.owners }}</h6>
+                                            </td>
+					                        <td class="border text-center">
+                                                <h6 class="">{{ car.disclosed.day }}/{{ car.disclosed.month }}/{{ car.disclosed.year }}</h6>
                                             </td>
                                             <td class="border">
                                                 <h6 class="">{{ car.provider_name }}</h6>
@@ -154,6 +166,10 @@
 {% block javascripts %}
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        let op = "{{ op }}"
+
+        
+
         
         // Ação de deletar
         let elem
@@ -194,51 +210,65 @@
             element.addEventListener("click", event => {
                 let verify
                 let very
-                let input1 = document.querySelector("#mension2")
-                let input2 = document.querySelector("#mension")
+                let input1 = document.querySelector("#mension2") // input name
+                let input2 = document.querySelector("#mension") // input min max
+                let input3 = document.querySelector("#mension3") // input number
                 let i1Dnone = input1.classList.contains("d-none")
                 let i2Dnone = input2.classList.contains("d-none")
+                let i3Dnone = input3.classList.contains("d-none")
                 let element = event.currentTarget
                 let value = element.value
                 
                 if (value === "name"){
                     verify = input1.classList.contains('d-none')
                     very = input2.classList.contains("d-none")
-                    if (verify && !very) {
+                    very_ = input3.classList.contains("d-none")
+                    if (verify && (!very || !very_)) {
                         input1.classList.remove("d-none")
                         input2.classList.add("d-none")
+                        input3.classList.add("d-none")
                     }
                 }else if (value === "year"){
                     verify = input1.classList.contains('d-none')
                     very = input2.classList.contains("d-none")
-                    if (verify && !very) {
-                        input1.classList.remove("d-none")
-                        input2.classList.add("d-none")
+                    very_ = input3.classList.contains("d-none")
+                    if (very && (!verify || !very_)) {
+                        input1.classList.add("d-none")
+                        input2.classList.remove("d-none")
+                        input3.classList.add("d-none")
                     }
                 }else if (value === "price"){
                     verify = input1.classList.contains('d-none')
                     very = input2.classList.contains("d-none")
-                    if (!verify && very) {
+                    very_ = input3.classList.contains("d-none")
+                    if (very && (!verify || !very_)) {
                         input1.classList.add("d-none")
                         input2.classList.remove("d-none")
+                        input3.classList.add("d-none")
                     }
-                }else if (value === "own"){
+                }else if (value === "owner"){
                     verify = input1.classList.contains('d-none')
                     very = input2.classList.contains("d-none")
-                    if (verify && !very) {
-                        input1.classList.remove("d-none")
+                    very_ = input3.classList.contains("d-none")
+                    if (very_ && (!verify || !very)) {
+                        input1.classList.add("d-none")
                         input2.classList.add("d-none")
+                        input3.classList.remove("d-none")
                     }
                 }else{
                     verify = input1.classList.contains('d-none')
                     very = input2.classList.contains("d-none")
-                    if (!verify && very) {
+                    very_ = input3.classList.contains("d-none")
+                    if (very && (!verify || !very_)) {
                         input1.classList.add("d-none")
                         input2.classList.remove("d-none")
+                        input3.classList.add("d-none")
                     }
                 }
             })
         })
+        let opp = document.querySelector(`input[value='${op}']`)
+        opp.click()
 
         let buttonsSearch = document.querySelectorAll("#buscar")
         buttonsSearch.forEach(element => {
@@ -252,11 +282,12 @@
                         return
                     }
                 })
-                if (option.value === "km" || option.value === "price"){
+
+                if (option.value === "km" || option.value === "price" || option.value === "year"){
                     let inputMin = document.querySelector("input[placeholder='minimo']").value
                     let inputMax = document.querySelector("input[placeholder='máximo']").value
                     let errorMinMax = document.querySelector("#errorMinMax")
-                    if ((parseInt(`${inputMin}`) > parseInt(`${inputMax}`)) || (inputMin < 0) || (inputMax < 0) || !inputMin || !inputMax){
+                    if ((parseInt(`${inputMin}`) > parseInt(`${inputMax}`)) || (parseInt(inputMin) < 0) || (parseInt(inputMax) < 0) || !inputMin || !inputMax){
                         errorMinMax.classList.remove("d-none")
                     }
                     else{
@@ -272,9 +303,10 @@
                         }
                     }
                 }else {
-                    if (option.value === "own") {
-                        let input = document.querySelector("input[placeholder='Pesquisar']")
-                        let very = (input.value.includes("1")) || (input.value.includes("2"))
+                    if (option.value === "owner") {
+                        let input = document.querySelector("input[placeholder='Pesquisar 1 ou 2 donos']")
+                        let very = ((input.value.includes("1")) || (input.value.includes("2"))) && ((!input.value.includes("12")) || (!input.value.includes("21")))
+                        console.log(input.value)
                         if (!input.value || !very){
                             let elemError = document.querySelector("#errorOwn")
                             if (!input.classList.contains("d-none")){
