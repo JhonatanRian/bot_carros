@@ -11,7 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from apps.home.models import Cars, Year
+from home.models import Cars, Year
 
 def dict2obj(d): 
     if isinstance(d, list): 

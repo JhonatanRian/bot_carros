@@ -37,3 +37,6 @@ apps/static/assets/.temp
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+dump.rdb
+

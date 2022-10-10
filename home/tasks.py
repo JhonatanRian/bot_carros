@@ -2,10 +2,10 @@ from os import system
 from unicodedata import name
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from apps.home.models import Cars, Year
-from apps.home.bot.bot_mercado_livre import get as get_mercado_livre
-from apps.home.bot.bot_icarros import get as get_icarros
-from apps.home.bot.helpers import Car
+from home.models import Cars, Year
+from home.bot.bot_mercado_livre import get as get_mercado_livre
+from home.bot.bot_icarros import get as get_icarros
+from home.bot.helpers import Car
 
 logger = get_task_logger(__name__)
 

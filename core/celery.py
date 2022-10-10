@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 app = Celery('bots')
 app.config_from_object('django.conf:settings', namespace='CELERY')
-app.conf.broker_url = 'redis://localhost:6379/0'
+app.conf.broker_url = 'redis://redis:6379'
 app.conf.timezone = 'America/Belem'
 
 
@@ -23,8 +23,4 @@ app.conf.beat_schedule = {
         'task': 'apps.home.tasks.save_icarros',
         'schedule': crontab(minute=0, hour='*/6'),
     },
-    # 'node': {
-    #     'task': 'apps.home.tasks.node',
-    #     'schedule': crontab(minute=0, hour='6,18'),
-    # },
 }

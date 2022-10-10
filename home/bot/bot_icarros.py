@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Tuple
 from requests_html import HTMLSession
-from apps.home.bot.helpers import Car
+from home.bot.helpers import Car
 
 
 def get() -> Tuple[Car]:

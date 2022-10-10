@@ -1,38 +1,52 @@
-version: '3.8'
+version: "3.3"
+
 services:
-  appseed-app:
-    container_name: appseed_app
-    restart: always
-    env_file: .env
-    build: .
-    networks:
-      - db_network
-      - web_network
   nginx:
-    container_name: nginx
-    restart: always
-    image: "nginx:latest"
-    ports:
-      - "85:85"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-    networks:
-      - web_network
-    depends_on: 
-      - appseed-app
-networks:
-  db_network:
-    driver: bridge
-  web_network:
-    driver: bridge
-  app:
-    build:
+    build: 
+      dockerfile: ./docker/nginx.dockerfile
       context: .
+    image: rodrigo/nginx_appbuzz:v1
+    container_name: nginx
     ports:
-      - "8000:8000"
+      - "80:80"
+    networks:
+      - nwbuzz
+    depends_on:
+      - appbuzz
+
+  postgre:
+    build: 
+      dockerfile: ./docker/pgbuzz.dockerfile
+      context: .
+    image: postgre/appbuzz:v1
+    ports:
+      - "5432"
+    networks:
+      - nwbuzz
     volumes:
-      - ./app:/app
-    command: >
-      sh -c "python3 manage.py migrate &&
-             python3 manage.py runserver 0.0.0.0:8000"
- 
+      - pgdata:/var/lib/postgresql/data/
+
+  appbuzz:
+    build: 
+      dockerfile: ./docker/appbuzz.dockerfile
+      context: .
+    image: rodrigo/app:v1
+    container_name: app_bot_carros
+    ports:
+      - "8000"
+    networks:
+      - nwbuzz
+    depends_on:
+      - postgre
+
+  redis:
+    image: 'redis'
+    networks:
+      - nwbuzz
+
+networks:
+  nwbuzz:
+    driver: bridge
+
+volumes:
+  pgdata:

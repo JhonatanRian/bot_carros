@@ -8,14 +8,14 @@ from decouple import config
 from unipath import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = Path(__file__).parent
-CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CORE_DIR = Path(__file__).parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # load production server from .env
 ALLOWED_HOSTS = ['*']
@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'celery',
     'django_celery_beat',
     'django_celery_results',
-    'apps.home'  # Enable the inner home (home)
+    'home',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -49,12 +50,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'core.urls'
 LOGIN_REDIRECT_URL = "home"  # Route defined in home/urls.py
 LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
-TEMPLATE_DIR = os.path.join(CORE_DIR, "apps/templates")  # ROOT dir for templates
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,13 +72,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'db.sqlite3',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bot_carros',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'buzz_app',
         'USER': 'buzz',
-        'PASSWORD': 'podersemlimites',
-        'HOST': 'localhost',
+        'PASSWORD': 'buzz_pass',
+        'HOST': 'postgre',
         'PORT': '5432',
     }
 }
@@ -115,17 +121,13 @@ USE_TZ = True
 #############################################################
 
 # Static files (CSS, JavaScript, Images)
-STATIC_ROOT = os.path.join(CORE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Extra places for collectstatic to find static files.
-
-
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(CORE_DIR, 'apps/static'),
-)
 
 
 #############################################################
